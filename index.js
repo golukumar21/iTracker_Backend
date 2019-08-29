@@ -1,19 +1,18 @@
 var express = require('express');
-var router = express.Router();
 var app = express();
 var bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.set('view engine', 'jade');
 app.use(express.static(__dirname + '../iTrackerDB'));
 
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://127.0.0.1:27017/iTracker', { useNewUrlParser: true });
+var mongoUtil = require('./mongoUtil.js');
 
-var createProject = require('./createProject.js');
+mongoUtil.connectToServer(function (err, client) {
+    if (err) console.log(err);
+});
 
-app.use('/createProject', createProject);
+var prj = require('./createProject.js');
 
-module.exports = router;
+app.use('/prj', prj);
 app.listen(4000);

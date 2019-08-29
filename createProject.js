@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
-var mongoose = require('mongoose');
-
+const mongoose = require('mongoose');
+var mongoUtil = require('./mongoUtil.js');
+var db = mongoUtil.getDb();
 var createProjectSchema = mongoose.Schema({
     pName: String,
     pManager: String,
@@ -19,7 +20,7 @@ var Project = mongoose.model("Project", createProjectSchema);
 
 
 router.post('/', function(req, res){
-    var projectInfo = req.body; //Get the parsed information
+    var projectInfo = req.body; 
     
     if(!projectInfo.pName || !projectInfo.pManager || !projectInfo.pManagerEmail || !projectInfo.pcreateDate || 
         !projectInfo.pETA || !projectInfo.pResource || !projectInfo.pManagerContact ||
@@ -46,6 +47,12 @@ router.post('/', function(req, res){
              res.send("Sucessfully created new project");
        });
     }
+ });
+
+ router.get('/', function(req, res) {
+    Project.find({},function(err, result){
+        res.json(result);
+    });
  });
 
  module.exports = router;
