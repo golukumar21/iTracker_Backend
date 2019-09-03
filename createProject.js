@@ -45,14 +45,42 @@ router.post('/', function (req, res) {
     };
 });
 
-router.get('/', function (req, res) {
-    Project.find({}, function (err, result) {
-        if (result) {
-            res.send({ res: result });
-        } else {
-            res.send("Not able to fetch records!")
-        }
-    });
+router.get('/',async function (req, res) {
+    try {
+        var result = await Project.find().exec();
+        res.send({res: result});
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+router.get('/:id',async function(req,res) {
+    try {
+        var proj = await Project.findById(req.params.id).exec();
+        res.send({res: proj});
+    } catch (error) {
+        res.status(500).send(error);
+    }
+})
+
+router.put("/:id", async function(req, res) {
+    try {
+        var proj = await Project.findById(request.params.id).exec();
+        proj.set(request.body);
+        var result = await proj.save();
+        res.send({res:result});
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+router.delete("/:id", async function(req, res) {
+    try {
+        var result = await Project.deleteOne({ _id: request.params.id }).exec();
+        res.send({res:result});
+    } catch (error) {
+        res.status(500).send(error);
+    }
 });
 
 module.exports = router;
