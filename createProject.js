@@ -45,39 +45,56 @@ router.post('/', function (req, res) {
     };
 });
 
-router.get('/',async function (req, res) {
+router.get('/getCount', async function (req, res) {
     try {
-        var result = await Project.find().exec();
-        res.send({res: result});
+        var totalCount = await Project.countDocuments();
+        var ongoingCount = await Project.find({ "pStatus": "In Progress" }).countDocuments();
+        var completedCount = await Project.find({ "pStatus": "Completed" }).countDocuments();
+        res.send({
+            res: {
+                "total": totalCount,
+                "ongoing": ongoingCount,
+                "completed": completedCount
+            }
+        });
     } catch (error) {
         res.status(500).send(error);
     }
 });
 
-router.get('/:id',async function(req,res) {
+router.get('/', async function (req, res) {
+    try {
+        var result = await Project.find().exec();
+        res.send({ res: result });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
+router.get('/:id', async function (req, res) {
     try {
         var proj = await Project.findById(req.params.id).exec();
-        res.send({res: proj});
+        res.send({ res: proj });
     } catch (error) {
         res.status(500).send(error);
     }
 })
 
-router.put("/:id", async function(req, res) {
+router.put("/:id", async function (req, res) {
     try {
         var proj = await Project.findById(request.params.id).exec();
         proj.set(request.body);
         var result = await proj.save();
-        res.send({res:result});
+        res.send({ res: result });
     } catch (error) {
         res.status(500).send(error);
     }
 });
 
-router.delete("/:id", async function(req, res) {
+router.delete("/:id", async function (req, res) {
     try {
         var result = await Project.deleteOne({ _id: request.params.id }).exec();
-        res.send({res:result});
+        res.send({ res: result });
     } catch (error) {
         res.status(500).send(error);
     }
